@@ -1,3 +1,11 @@
+mod run;
+
+use std::process;
+
 fn main() {
-    println!("Hello, world!");
+    if let Err(e) = run::run() {
+        eprintln!("{}", e);
+
+        process::exit(1);
+    }
 }
