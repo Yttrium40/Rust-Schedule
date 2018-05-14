@@ -79,7 +79,7 @@ pub fn run() -> Result<(), Box<Error>> {
                 "5" => run_edit(&mut schedule)?,
                 "6" => run_export(&schedule)?,
                 "7" => break,
-                "8" => run_settings(&mut settings)?,
+                "8" => run_settings()?,
                 "9" => process::exit(0),
                 _ => print("Enter a command: "),
             };
@@ -103,7 +103,12 @@ fn run_display_event(schedule: &Schedule) -> Result<(), Box<Error>> {
             Err(_) => print("Enter a number less than 100: "),
         };
     }
+    println!();
     display::display_event(id, &schedule)?;
+    println!();
+    print("Press enter to continue");
+    read_input();
+
     Ok(())
 }
 
@@ -179,7 +184,7 @@ fn run_export(schedule: &Schedule) -> Result<(), Box<Error>> {
     Ok(())
 }
 
-fn run_settings(settings: &mut Settings) -> Result<(), Box<Error>> {
+fn run_settings() -> Result<(), Box<Error>> {
     Ok(())
 }
 
