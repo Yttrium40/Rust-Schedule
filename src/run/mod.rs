@@ -1,13 +1,16 @@
 mod event;
 
 use std::io;
+use std::io::Write;
 use std::error::Error;
 use std::process;
 use run::event::Event;
 use run::event::Time;
+use run::event::Day;
 use run::event::schedule::Schedule;
+use run::event::schedule::display;
 
-struct Settings {
+pub struct Settings {
     twelve_hour: bool,
 }
 
@@ -23,9 +26,13 @@ impl Settings {
     }
 }
 
+static mut SETTINGS: Settings = Settings {
+        twelve_hour: false,
+    };
+
 pub fn run() -> Result<(), Box<Error>> {
     loop {
-        println!("Enter 1 to start a new schedule, or 2 to import a text file.");
+        print("Enter 1 to start a new schedule, or 2 to import a text file: ");
         let mut input = String::new();
 
         loop {
@@ -39,16 +46,16 @@ pub fn run() -> Result<(), Box<Error>> {
                     println!("Import schedule!");
                     break;
                 },
-                _ => println!("Enter either 1 or 2."),
+                _ => print("Enter either 1 or 2: "),
             };
         }
         let mut schedule = Schedule::new();
-        let mut settings = Settings::new();
         if input == "2" {
             println!("Import functionality coming soon!");
         }
 
         loop {
+            println!("----------");
             println!("Commands:");
             println!("1: Display schedule");
             println!("2: Display specific event");
@@ -59,6 +66,8 @@ pub fn run() -> Result<(), Box<Error>> {
             println!("7: Return to new/import schedule");
             println!("8: Change settings");
             println!("9: Exit");
+            println!("----------");
+            print("Enter a command: ");
 
             input = read_input()?;
 
@@ -72,7 +81,7 @@ pub fn run() -> Result<(), Box<Error>> {
                 "7" => break,
                 "8" => run_settings(&mut settings)?,
                 "9" => process::exit(0),
-                _ => println!("Enter a command."),
+                _ => print("Enter a command: "),
             };
         }
     }
@@ -83,14 +92,46 @@ fn run_display_schedule(schedule: &Schedule) -> Result<(), Box<Error>> {
 }
 
 fn run_display_event(schedule: &Schedule) -> Result<(), Box<Error>> {
+    print("Enter an event ID: ");
+    let mut id = 0;
+    loop {
+        match read_input().unwrap().parse::<u8>() {
+            Ok(i) => if i < 100 {
+                id = i;
+                break;
+            },
+            Err(_) => print("Enter a number less than 100: "),
+        };
+    }
+    display::display_event(id, &schedule)?;
     Ok(())
 }
 
 fn run_add(schedule: &mut Schedule) -> Result<(), Box<Error>> {
-    println!("Enter an event name");
+    print("Enter an event name: ");
     let name = read_input()?;
 
-    println!("Enter a starting time");
+    print("Enter a day: ");
+    let mut day = Day::Sunday;
+    loop {
+        let input = read_input()?;
+        day = match input.to_lowercase().as_str() {
+            "sunday" => Day::Sunday,
+            "monday" => Day::Monday,
+            "tuesday" => Day::Tuesday,
+            "wednesday" => Day::Wednesday,
+            "thursday" => Day::Thursday,
+            "friday" => Day::Friday,
+            "saturday" => Day::Saturday,
+            _ => {
+                print("Enter a day: ");
+                continue;
+            }
+        };
+        break;
+    }
+
+    print("Enter a starting time: ");
     let mut start = 0;
     loop {
         match read_input().unwrap().parse::<u16>() {
@@ -98,10 +139,10 @@ fn run_add(schedule: &mut Schedule) -> Result<(), Box<Error>> {
                 start = i;
                 break;
             },
-            Err(_) => println!("Enter a time"),
+            Err(_) => print("Enter a time: "),
         };
     }
-    println!("Enter an ending time");
+    print("Enter an ending time: ");
     let mut end = 0;
     loop {
         match read_input().unwrap().parse::<u16>() {
@@ -109,18 +150,19 @@ fn run_add(schedule: &mut Schedule) -> Result<(), Box<Error>> {
                 end = i;
                 break;
             },
-            Err(_) => println!("Enter a time"),
+            Err(_) => print("Enter a time: "),
         };
     }
     let time = Time(start, end);
 
-    println!("Enter a location");
+    print("Enter a location: ");
     let location = read_input()?;
 
-    println!("Enter a description");
+    print("Enter a description: ");
     let description = read_input()?;
 
-    schedule.add(Event::new(&name, time, &location, &description))?;
+    let id = schedule.add(Event::new(&name, day, time, &location, &description))?;
+    println!("New event created with ID {}", id);
 
     Ok(())
 }
@@ -139,6 +181,11 @@ fn run_export(schedule: &Schedule) -> Result<(), Box<Error>> {
 
 fn run_settings(settings: &mut Settings) -> Result<(), Box<Error>> {
     Ok(())
+}
+
+fn print(string: &str) {
+    print!("{}", string);
+    io::stdout().flush().unwrap();
 }
 
 fn read_input() -> Result<String, Box<Error>> {

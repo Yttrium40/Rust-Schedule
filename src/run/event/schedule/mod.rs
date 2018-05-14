@@ -1,6 +1,10 @@
 use std::collections::HashMap;
 use super::Event;
 use super::Time;
+use super::Day;
+
+pub mod display;
+pub mod xport;
 
 pub struct Schedule {
     pub table: HashMap<u8, Event>,
@@ -12,7 +16,7 @@ impl Schedule {
         Schedule { table: HashMap::new(), next_id: 0 }
     }
 
-    pub fn add(&mut self, event: Event) -> Result<(), String> {
+    pub fn add(&mut self, event: Event) -> Result<u8, String> {
         if self.next_id > 99 {
             return Err(String::from("Maximum number of events reached."));
         }
@@ -20,8 +24,9 @@ impl Schedule {
             return Err(format!("Time overlap with event ID {}.", id));
         }
         if self.table.insert(self.next_id, event).is_none() {
+            let id = self.next_id;
             self.increment_id();
-            return Ok(());
+            return Ok(id);
         } else {
             panic!("ID already exists!");
         }
@@ -33,6 +38,14 @@ impl Schedule {
                 self.next_id = id;
             }
             Ok(())
+        } else {
+            Err(String::from("ID not found."))
+        }
+    }
+
+    pub fn get(&self, id: u8) -> Result<&Event, String> {
+        if let Some(event) = self.table.get(&id) {
+            Ok(event)
         } else {
             Err(String::from("ID not found."))
         }
@@ -76,8 +89,8 @@ mod test {
     #[should_panic]
     fn add_and_overlap() {
         let mut table = Schedule::new();
-        table.add(Event::new("N", Time(100, 500), "L", "D")).unwrap();
-        match table.add(Event::new("N2", Time(200, 300), "L2", "D2")) {
+        table.add(Event::new("N", Day::Saturday, Time(100, 500), "L", "D")).unwrap();
+        match table.add(Event::new("N2", Day::Monday, Time(200, 300), "L2", "D2")) {
             Err(_) => panic!("Problem"),
             Ok(()) => (),
         }
@@ -85,8 +98,8 @@ mod test {
     #[test]
     fn remove() {
         let mut table = Schedule::new();
-        table.add(Event::new("N", Time(100, 200), "L", "D")).unwrap();
-        table.add(Event::new("N2", Time(300, 400), "L2", "D2")).unwrap();
+        table.add(Event::new("N", Day::Monday, Time(100, 200), "L", "D")).unwrap();
+        table.add(Event::new("N2", Day::Thursday, Time(300, 400), "L2", "D2")).unwrap();
         match table.remove(0) {
             Err(_) => panic!("Problem"),
             Ok(()) => (),
