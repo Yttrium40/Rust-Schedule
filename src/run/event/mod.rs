@@ -1,6 +1,6 @@
 pub mod schedule;
 
-pub struct Time(u16, u16);
+pub struct Time(pub u16,pub u16);
 
 pub struct Event {
     pub name: String,
@@ -10,7 +10,7 @@ pub struct Event {
 }
 
 impl Event {
-    fn new(name: &str, time: Time, location: &str, description: &str) -> Event {
+    pub fn new(name: &str, time: Time, location: &str, description: &str) -> Event {
         Event {
             name: String::from(name),
             time,
