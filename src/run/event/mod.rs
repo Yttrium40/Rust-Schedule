@@ -4,7 +4,7 @@ pub struct Time(pub u16,pub u16);
 
 impl Time {
     pub fn to_string(time: &Time) -> String {
-        String::new() // TODO
+        unimplemented!(); // TODO
     }
 }
 

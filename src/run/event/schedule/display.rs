@@ -15,5 +15,5 @@ pub fn display_event(id: u8, schedule: &Schedule) -> Result<(), String> {
 }
 
 pub fn display_schedule(schedule: &Schedule) -> Result<(), String> {
-    Ok(())
+    unimplemented!();
 }

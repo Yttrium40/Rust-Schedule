@@ -71,43 +71,42 @@ pub fn run() -> Result<(), Box<Error>> {
 
             input = read_input()?;
 
-            match input.as_str() {
-                "1" => run_display_schedule(&schedule)?,
-                "2" => run_display_event(&schedule)?,
-                "3" => run_add(&mut schedule)?,
-                "4" => run_remove(&mut schedule)?,
-                "5" => run_edit(&mut schedule)?,
-                "6" => run_export(&schedule)?,
+            let result = match input.as_str() {
+                "1" => run_display_schedule(&schedule),
+                "2" => run_display_event(&schedule),
+                "3" => run_add(&mut schedule),
+                "4" => run_remove(&mut schedule),
+                "5" => run_edit(&mut schedule),
+                "6" => run_export(&schedule),
                 "7" => break,
-                "8" => run_settings()?,
+                "8" => run_settings(),
                 "9" => process::exit(0),
-                _ => print("Enter a command: "),
+                _ => {
+                    print("Enter a command: ");
+                    Ok(())
+                },
             };
+            if let Err(e) = result {
+                println!("ERROR IN OPERATION: {}", e);
+                print("Press enter to continue");
+                read_input()?;
+            }
         }
     }
 }
 
 fn run_display_schedule(schedule: &Schedule) -> Result<(), Box<Error>> {
-    Ok(())
+    unimplemented!();
 }
 
 fn run_display_event(schedule: &Schedule) -> Result<(), Box<Error>> {
     print("Enter an event ID: ");
-    let mut id = 0;
-    loop {
-        match read_input().unwrap().parse::<u8>() {
-            Ok(i) => if i < 100 {
-                id = i;
-                break;
-            },
-            Err(_) => print("Enter a number less than 100: "),
-        };
-    }
+    let id = read_input_id();
     println!();
     display::display_event(id, &schedule)?;
     println!();
     print("Press enter to continue");
-    read_input();
+    read_input()?;
 
     Ok(())
 }
@@ -173,19 +172,23 @@ fn run_add(schedule: &mut Schedule) -> Result<(), Box<Error>> {
 }
 
 fn run_remove(schedule: &mut Schedule) -> Result<(), Box<Error>> {
+    print("Enter an event ID: ");
+    let id = read_input_id();
+    schedule.remove(id)?;
+    println!("Event removed.");
     Ok(())
 }
 
 fn run_edit(schedule: &mut Schedule) -> Result<(), Box<Error>> {
-    Ok(())
+    unimplemented!();
 }
 
 fn run_export(schedule: &Schedule) -> Result<(), Box<Error>> {
-    Ok(())
+    unimplemented!();
 }
 
 fn run_settings() -> Result<(), Box<Error>> {
-    Ok(())
+    unimplemented!();
 }
 
 fn print(string: &str) {
@@ -197,4 +200,18 @@ fn read_input() -> Result<String, Box<Error>> {
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
     Ok(String::from(input.trim()))
+}
+
+fn read_input_id() -> u8 {
+    let mut id = 0;
+    loop {
+        match read_input().unwrap().parse::<u8>() {
+            Ok(i) => if i < 100 {
+                id = i;
+                break;
+            },
+            Err(_) => print("Enter a number less than 100: "),
+        };
+    }
+    id
 }
