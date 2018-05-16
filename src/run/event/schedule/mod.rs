@@ -43,12 +43,24 @@ impl Schedule {
         }
     }
 
-    pub fn get(&self, id: u8) -> Result<&Event, String> {
-        if let Some(event) = self.table.get(&id) {
-            Ok(event)
-        } else {
-            Err(String::from("ID not found."))
-        }
+    pub fn edit(&mut self, id: u8, field: String, new_value: String) -> Result<(), String> {
+        let mut event = match self.table.get_mut(&id) {
+            Some(e) => e,
+            None => return Err(String::from("ID not found.")),
+        };
+        match field.to_lowercase().as_str() {
+            "name" => event.name = new_value,
+            "day" => event.day = Day::from_string(new_value)?,
+            "time" => unimplemented!(),
+            "location" => event.location = new_value,
+            "description" => event.description = new_value,
+            _ => return Err(String::from("Invalid field.")),
+        };
+        Ok(())
+    }
+
+    pub fn get(&self, id: u8) -> Option<&Event> {
+        self.table.get(&id)
     }
 
     fn increment_id(&mut self) {

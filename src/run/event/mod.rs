@@ -3,6 +3,10 @@ pub mod schedule;
 pub struct Time(pub u16,pub u16);
 
 impl Time {
+    pub fn from_string(string: String) -> Result<Time, String> {
+        unimplemented!();
+    }
+
     pub fn to_string(time: &Time) -> String {
         unimplemented!(); // TODO
     }
@@ -19,6 +23,19 @@ pub enum Day {
 }
 
 impl Day {
+    pub fn from_string(string: String) -> Result<Day, String> {
+        match string.to_lowercase().as_str() {
+            "sunday" => Ok(Day::Sunday),
+            "monday" => Ok(Day::Monday),
+            "tuesday" => Ok(Day::Tuesday),
+            "wednesday" => Ok(Day::Wednesday),
+            "thursday" => Ok(Day::Thursday),
+            "friday" => Ok(Day::Friday),
+            "saturday" => Ok(Day::Saturday),
+            _ => Err(String::from("Invalid day.")),
+        }
+    }
+
     pub fn to_string(day: &Day) -> String {
         let s = match day {
             Day::Sunday => "Sunday",

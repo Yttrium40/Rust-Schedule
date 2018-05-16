@@ -119,20 +119,16 @@ fn run_add(schedule: &mut Schedule) -> Result<(), Box<Error>> {
     let mut day = Day::Sunday;
     loop {
         let input = read_input()?;
-        day = match input.to_lowercase().as_str() {
-            "sunday" => Day::Sunday,
-            "monday" => Day::Monday,
-            "tuesday" => Day::Tuesday,
-            "wednesday" => Day::Wednesday,
-            "thursday" => Day::Thursday,
-            "friday" => Day::Friday,
-            "saturday" => Day::Saturday,
-            _ => {
+        match Day::from_string(input) {
+            Ok(d) => {
+                day = d;
+                break;
+            },
+            Err(e) => {
+                println!("{}", e);
                 print("Enter a day: ");
-                continue;
-            }
+            },
         };
-        break;
     }
 
     print("Enter a starting time: ");
@@ -180,7 +176,14 @@ fn run_remove(schedule: &mut Schedule) -> Result<(), Box<Error>> {
 }
 
 fn run_edit(schedule: &mut Schedule) -> Result<(), Box<Error>> {
-    unimplemented!();
+    print("Enter an event ID: ");
+    let id = read_input_id();
+    print("Enter the field to be changed (name, day, time, location, description): ");
+    let field = read_input()?;
+    print("Enter the new value: ");
+    let new_value = read_input()?;
+    schedule.edit(id, field, new_value)?;
+    Ok(())
 }
 
 fn run_export(schedule: &Schedule) -> Result<(), Box<Error>> {
@@ -210,8 +213,9 @@ fn read_input_id() -> u8 {
                 id = i;
                 break;
             },
-            Err(_) => print("Enter a number less than 100: "),
+            Err(_) => (),
         };
+        print("Enter a number less than 100: ");
     }
     id
 }
