@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::mem::discriminant;
 use super::Event;
 use super::Time;
 use super::Day;
@@ -75,14 +76,15 @@ impl Schedule {
             let current_end = x.1.time.1;
             let new_start = event.time.0;
             let new_end = event.time.1;
-            (current_start >= new_start &&
+            ((current_start >= new_start &&
             current_start <= new_end) ||
             (current_end >= new_start &&
             current_end <= new_end) ||
             (new_start >= current_start &&
             new_start <= current_end) ||
             (new_end >= current_start &&
-            new_end <= current_end)
+            new_end <= current_end)) &&
+            (discriminant(&x.1.day) == discriminant(&event.day))
         };
 
         if let Some((key, _x_event)) = self.table.iter().find(conditions) {

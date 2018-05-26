@@ -7,7 +7,8 @@ pub fn display_event(id: u8, schedule: &Schedule) -> Result<(), String> {
     if let Some(event) = schedule.get(id) {
         println!("NAME:        {}", event.name);
         println!("DAY:         {}", Day::to_string(&event.day));
-        println!("TIME:        {} - {}", event.time.0, event.time.1);
+        let time = Time::to_string(&event.time);
+        println!("TIME:        {} - {}", time.0, time.1);
         println!("LOCATION:    {}", event.location);
         println!("DESCRIPTION: {}", event.description);
 

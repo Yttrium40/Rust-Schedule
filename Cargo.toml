@@ -2,5 +2,3 @@
 name = "rust_schedule"
 version = "0.1.0"
 authors = ["Yttrium40 <35752474+Yttrium40@users.noreply.github.com>"]
-
-[dependencies]

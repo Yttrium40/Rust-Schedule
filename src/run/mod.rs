@@ -101,7 +101,7 @@ fn run_display_schedule(schedule: &Schedule) -> Result<(), Box<Error>> {
 
 fn run_display_event(schedule: &Schedule) -> Result<(), Box<Error>> {
     print("Enter an event ID: ");
-    let id = read_input_id();
+    let id = read_input_id()?;
     println!();
     display::display_event(id, &schedule)?;
     println!();
@@ -132,28 +132,10 @@ fn run_add(schedule: &mut Schedule) -> Result<(), Box<Error>> {
     }
 
     print("Enter a starting time: ");
-    let mut start = 0;
-    loop {
-        match read_input().unwrap().parse::<u16>() {
-            Ok(i) => {
-                start = i;
-                break;
-            },
-            Err(_) => print("Enter a time: "),
-        };
-    }
+    let start = read_input()?;
     print("Enter an ending time: ");
-    let mut end = 0;
-    loop {
-        match read_input().unwrap().parse::<u16>() {
-            Ok(i) => {
-                end = i;
-                break;
-            },
-            Err(_) => print("Enter a time: "),
-        };
-    }
-    let time = Time(start, end);
+    let end = read_input()?;
+    let time = Time::from_string((start, end))?;
 
     print("Enter a location: ");
     let location = read_input()?;
@@ -169,7 +151,7 @@ fn run_add(schedule: &mut Schedule) -> Result<(), Box<Error>> {
 
 fn run_remove(schedule: &mut Schedule) -> Result<(), Box<Error>> {
     print("Enter an event ID: ");
-    let id = read_input_id();
+    let id = read_input_id()?;
     schedule.remove(id)?;
     println!("Event removed.");
     Ok(())
@@ -177,7 +159,7 @@ fn run_remove(schedule: &mut Schedule) -> Result<(), Box<Error>> {
 
 fn run_edit(schedule: &mut Schedule) -> Result<(), Box<Error>> {
     print("Enter an event ID: ");
-    let id = read_input_id();
+    let id = read_input_id()?;
     print("Enter the field to be changed (name, day, time, location, description): ");
     let field = read_input()?;
     print("Enter the new value: ");
@@ -205,10 +187,10 @@ fn read_input() -> Result<String, Box<Error>> {
     Ok(String::from(input.trim()))
 }
 
-fn read_input_id() -> u8 {
+fn read_input_id() -> Result<u8, Box<Error>> {
     let mut id = 0;
     loop {
-        match read_input().unwrap().parse::<u8>() {
+        match read_input()?.parse::<u8>() {
             Ok(i) => if i < 100 {
                 id = i;
                 break;
@@ -217,5 +199,5 @@ fn read_input_id() -> u8 {
         };
         print("Enter a number less than 100: ");
     }
-    id
+    Ok(id)
 }
