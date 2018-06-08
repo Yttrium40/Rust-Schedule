@@ -17,7 +17,7 @@ impl Schedule {
         Schedule { table: HashMap::new(), next_id: 0 }
     }
 
-    pub fn add(&mut self, event: Event) -> Result<u8, String> {
+    pub fn add(&mut self, mut event: Event) -> Result<u8, String> {
         if self.next_id > 99 {
             return Err(String::from("Maximum number of events reached."));
         }
@@ -27,6 +27,7 @@ impl Schedule {
         if self.table.insert(self.next_id, event).is_none() {
             let id = self.next_id;
             self.increment_id();
+            event.id = id;
             return Ok(id);
         } else {
             panic!("ID already exists!");

@@ -100,6 +100,7 @@ impl Day {
 }
 
 pub struct Event {
+    pub id: u8,
     pub name: String,
     pub day: Day,
     pub time: Time,         // uses 24-hr time internally, e.g. 1230 for 12:30 p.m.
@@ -110,6 +111,7 @@ pub struct Event {
 impl Event {
     pub fn new(name: &str, day: Day, time: Time, location: &str, description: &str) -> Event {
         Event {
+            id: 100,
             name: String::from(name),
             day,
             time,

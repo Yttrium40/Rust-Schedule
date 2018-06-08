@@ -96,7 +96,8 @@ pub fn run() -> Result<(), Box<Error>> {
 }
 
 fn run_display_schedule(schedule: &Schedule) -> Result<(), Box<Error>> {
-    unimplemented!();
+    display::display_schedule(&schedule)?;
+    Ok(())
 }
 
 fn run_display_event(schedule: &Schedule) -> Result<(), Box<Error>> {
