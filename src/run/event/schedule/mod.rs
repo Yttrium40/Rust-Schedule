@@ -24,10 +24,10 @@ impl Schedule {
         if let Some(id) = self.check_time_overlap(&event) {
             return Err(format!("Time overlap with event ID {}.", id));
         }
+        event.id = self.next_id;
         if self.table.insert(self.next_id, event).is_none() {
             let id = self.next_id;
             self.increment_id();
-            event.id = id;
             return Ok(id);
         } else {
             panic!("ID already exists!");

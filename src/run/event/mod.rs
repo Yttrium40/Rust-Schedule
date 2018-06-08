@@ -87,13 +87,13 @@ impl Day {
 
     pub fn to_string(day: &Day) -> String {
         let s = match day {
-            Day::Sunday => "Sunday",
-            Day::Monday => "Monday",
-            Day::Tuesday => "Tuesday",
-            Day::Wednesday => "Wednesday",
-            Day::Thursday => "Thursday",
-            Day::Friday => "Friday",
-            Day::Saturday => "Saturday",
+            &Day::Sunday => "Sunday",
+            &Day::Monday => "Monday",
+            &Day::Tuesday => "Tuesday",
+            &Day::Wednesday => "Wednesday",
+            &Day::Thursday => "Thursday",
+            &Day::Friday => "Friday",
+            &Day::Saturday => "Saturday",
         };
         String::from(s)
     }
