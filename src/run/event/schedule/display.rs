@@ -7,20 +7,35 @@ use std::mem::discriminant;
 
 pub fn display_event(id: u8, schedule: &Schedule) -> Result<(), String> {
     if let Some(event) = schedule.get(id) {
-        println!("NAME:        {}", event.name);
-        println!("DAY:         {}", Day::to_string(&event.day));
-        let time = Time::to_string(&event.time);
-        println!("TIME:        {} - {}", time.0, time.1);
-        println!("LOCATION:    {}", event.location);
-        println!("DESCRIPTION: {}", event.description);
-
+        println!("{}", get_event_string(&event));
         Ok(())
     } else {
         Err(String::from("ID not found."))
     }
 }
 
-pub fn display_schedule(schedule: &Schedule) -> Result<(), String> {
+pub fn get_event_string(event: &Event) -> String {
+    let time = Time::to_string(&event.time);
+    format!("NAME:        {name}
+DAY:         {day}
+TIME:        {start} - {end}
+LOCATION:    {location}
+DESCRIPTION: {description}",
+             name = event.name,
+             day = Day::to_string(&event.day),
+             start = time.0,
+             end = time.1,
+             location = event.location,
+             description = event.description)
+}
+
+pub fn display_schedule(schedule: &Schedule) {
+    let string = get_schedule_string(&schedule);
+    println!("{}", string);
+}
+
+pub fn get_schedule_string(schedule: &Schedule) -> String {
+    let mut string: String = "".to_string();
     for day in [Day::Sunday, Day::Monday, Day::Tuesday, Day::Wednesday, Day::Thursday, Day::Friday, Day::Saturday].iter() {
         let mut events: Vec<&Event> = vec!();
         for event in schedule.table.iter() {
@@ -35,13 +50,16 @@ pub fn display_schedule(schedule: &Schedule) -> Result<(), String> {
                     false => Ordering::Greater,
                 }
             );
-            println!();
-            println!("{}", Day::to_string(&day));
-            println!();
+            string.push('\n');
+            string.push_str(&Day::to_string(&day));
+            string.push('\n');
+            string.push('\n');
             for event in events {
-                display_event(event.id, &schedule)?;
+                string.push_str(&get_event_string(&event));
+                string.push('\n');
+                string.push('\n');
             }
         }
     }
-    Ok(())
+    String::from(string)
 }

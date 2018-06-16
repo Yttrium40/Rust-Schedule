@@ -9,6 +9,7 @@ use run::event::Time;
 use run::event::Day;
 use run::event::schedule::Schedule;
 use run::event::schedule::display;
+use run::event::schedule::xport;
 
 pub struct Settings {
     twelve_hour: bool,
@@ -96,7 +97,7 @@ pub fn run() -> Result<(), Box<Error>> {
 }
 
 fn run_display_schedule(schedule: &Schedule) -> Result<(), Box<Error>> {
-    display::display_schedule(&schedule)?;
+    display::display_schedule(&schedule);
     Ok(())
 }
 
@@ -170,7 +171,10 @@ fn run_edit(schedule: &mut Schedule) -> Result<(), Box<Error>> {
 }
 
 fn run_export(schedule: &Schedule) -> Result<(), Box<Error>> {
-    unimplemented!();
+    print("Enter name of text file: ");
+    let name = read_input()?;
+    xport::export_schedule(name, &schedule)?;
+    Ok(())
 }
 
 fn run_settings() -> Result<(), Box<Error>> {
