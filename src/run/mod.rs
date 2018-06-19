@@ -52,7 +52,16 @@ pub fn run() -> Result<(), Box<Error>> {
         }
         let mut schedule = Schedule::new();
         if input == "2" {
-            println!("Import functionality coming soon!");
+            print("Enter name of text file: ");
+            let name = read_input()?;
+            let result = xport::import_schedule(name);
+            if let Err(e) = result {
+                println!("ERROR IN OPERATION: {}", e);
+                print("Press enter to continue");
+                read_input()?;
+            } else {
+                schedule = result.unwrap();
+            }
         }
 
         loop {

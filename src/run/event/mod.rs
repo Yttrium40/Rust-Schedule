@@ -1,5 +1,6 @@
 pub mod schedule;
 
+#[derive(Copy, Clone)]
 pub struct Time(pub u16, pub u16);
 
 impl Time {
@@ -60,7 +61,7 @@ impl Time {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Copy, Clone)]
 pub enum Day {
     Sunday,
     Monday,
